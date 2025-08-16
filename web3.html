@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Million Star Resort — Tokenized Reservations</title>
+  <style>
+    :root{
+      --bg:#000; --text:#fff; --muted:#bbb; --gold:#d4af37; --gold-2:#b9962e; --panel:#0f0f0f; --border:#2a2a2a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+    a{color:var(--gold);text-decoration:none}
+    .topbar{position:fixed;inset:0 auto auto 0;right:0;height:auto;z-index:40;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem}
+    .brand{display:flex;align-items:center;gap:.6rem}
+    .brand img{height:36px}
+    .brand .name{color:var(--gold);font-weight:700;letter-spacing:.4px}
+    .lang-select{appearance:none;background:#0b0b0b;color:var(--text);border:1px solid var(--border);padding:.45rem .75rem;border-radius:10px}
+    header.hero{
+      margin-top:58px; position:relative; min-height:72vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:4rem 1rem;
+      background:linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,.85)), url('header-image.jpg') center/cover no-repeat; border-bottom:1px solid var(--border);
+    }
+    .hero-inner{max-width:1000px}
+    h1{font-size:clamp(2rem,5vw,3.25rem);margin:.25rem 0;color:var(--gold)}
+    .tagline{color:var(--muted);font-size:clamp(1rem,2.5vw,1.15rem)}
+    .countdown{margin-top:1rem;display:inline-flex;gap:.5rem;background:rgba(212,175,55,.08);border:1px solid var(--gold);padding:.5rem .75rem;border-radius:12px;color:var(--gold)}
+    main{max-width:1120px;margin:auto;padding:2rem 1rem}
+    section{padding:2rem 0;border-bottom:1px solid var(--border)}
+    h2{color:var(--gold);margin:0 0 1rem 0;font-size:1.6rem}
+    p{margin:.35rem 0}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1rem 1.25rem}
+    .grid{display:grid;gap:1rem}
+    @media(min-width:800px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+    .pricing .row{display:flex;justify-content:space-between;padding:.65rem 0;border-bottom:1px dashed var(--border)}
+    .pricing .row:last-child{border-bottom:none}
+    .wallet-box{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+    .code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#111;border:1px solid var(--border);padding:.5rem .75rem;border-radius:10px}
+    .btn{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#1a1a1a;border:none;padding:.55rem .85rem;border-radius:10px;cursor:pointer;font-weight:700}
+    .btn.secondary{background:#101010;color:var(--gold);border:1px solid var(--gold-2)}
+    .notice{font-size:.95rem;color:var(--muted)}
+    form .row{display:grid;gap:.75rem;margin:.75rem 0}
+    @media(min-width:700px){form .row{grid-template-columns:1fr 1fr}}
+    label{font-size:.9rem;color:var(--muted)}
+    input, textarea{
+      width:100%;background:#0b0b0b;color:#fff;border:1px solid var(--border);border-radius:10px;padding:.65rem .75rem
+    }
+    textarea{min-height:110px;resize:vertical}
+    .msg{margin-top:.6rem;font-size:.95rem}
+    footer{padding:2rem 1rem;text-align:center;color:var(--muted)}
+    .hero-logo{filter:drop-shadow(0 6px 16px rgba(0,0,0,.7));width:min(200px,40vw);margin-bottom:.75rem}
+    /* RTL helpers */
+    [dir="rtl"] .pricing .row{flex-direction:row-reverse}
+    [dir="rtl"] .wallet-box{flex-direction:row-reverse}
+    [dir="rtl"] form .row{direction:rtl}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="Million Star Resort Logo"/>
+      <div class="name">Million Star Resort</div>
+    </div>
+    <select id="lang" class="lang-select" aria-label="Language">
+      <option value="en">English</option>
+      <option value="fa">فارسی</option>
+      <option value="ar">العربية</option>
+      <option value="tr">Türkçe</option>
+    </select>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <img class="hero-logo" src="logo.png" alt="MSR Logo">
+      <h1 data-i="hero_title">Where luxury meets the desert sky</h1>
+      <div class="tagline" data-i="hero_sub">Glass-roof villas • Private pools • Stargazing under a million stars</div>
+      <div class="countdown">
+        <span data-i="presale">Presale ends in:</span>&nbsp;<strong id="clock">--:--:--:--</strong>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- About -->
+    <section>
+      <h2 data-i="about_title">About the Project</h2>
+      <div class="panel">
+        <p data-i="about_text">
+          Million Star Resort is an eco-luxury desert retreat in Iran. Each private villa features a glass-ceiling bedroom for stargazing and a secluded pool—crafted for digital detox, serenity, and unforgettable stories.
+        </p>
+      </div>
+    </section>
+
+    <!-- Purpose & Vision -->
+    <section class="grid cols-2">
+      <div class="panel">
+        <h2 data-i="purpose_title">Our Purpose</h2>
+        <p><em data-i="purpose_quote">"Everyone deserves to make his/her story."</em></p>
+        <p data-i="purpose_text">We design moments that become memories—merging nature, privacy, and luxury so every guest can write a personal chapter under the night sky.</p>
+      </div>
+      <div class="panel">
+        <h2 data-i="vision_title">Our Vision</h2>
+        <p data-i="vision_text">To redefine hospitality by fusing stargazing architecture, sustainable design, and tokenized reservations—transparent, transferable, and global.</p>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section>
+      <h2 data-i="how_title">How It Works</h2>
+      <div class="panel">
+        <p data-i="how_text_1">
+          Purchase during the presale and our <strong>smart contract</strong> automatically sends tokens to your wallet. Each token represents <strong>one night</strong> you can stay at Million Star Resort.
+        </p>
+        <p data-i="how_text_2">
+          Tokens are transferable on Polygon. You can hold, use to book nights, or resell them on secondary markets. Fractional ownership grants proportional discount for a single night.
+        </p>
+      </div>
+    </section>
+
+    <!-- Token Pricing & Offers -->
+    <section>
+      <h2 data-i="pricing_title">Token Pricing & Special Offers</h2>
+      <div class="panel pricing">
+        <div class="row"><div data-i="real_value_label">Real Value (per MST)</div><div><strong>$120</strong></div></div>
+        <div class="row"><div data-i="presale_price_label">Presale Price (Priority 1)</div><div><strong>$50</strong> <span class="notice" data-i="off_note">(best early price)</span></div></div>
+        <div class="row"><div data-i="presale_alloc_label">Presale Allocation Cap</div><div><strong>$10,000 USDT</strong></div></div>
+        <div class="row"><div data-i="vip_label">VIP Tokens</div><div><strong>100 tokens</strong> — <span data-i="vip_tba">pricing & date TBA</span></div></div>
+      </div>
+      <p class="notice" data-i="priority_note">
+        Reservation priority: VIP holders → Priority 1 (presale) → general bookings.
+      </p>
+    </section>
+
+    <!-- Investor Info -->
+    <section>
+      <h2 data-i="investor_title">Investor Information</h2>
+      <div class="panel grid cols-2">
+        <div>
+          <p><strong data-i="token_name_label">MST (ERC-20):</strong> 1 token = 1 night stay (standard double room)</p>
+          <p><strong data-i="chain_label">Blockchain:</strong> Polygon</p>
+          <p><strong data-i="supply_label">MST Supply:</strong> 10,000 (Phase 1)</p>
+          <p><strong data-i="lifespan_label">Token Lifespan:</strong> 5 years, then 3% monthly decay</p>
+        </div>
+        <div>
+          <p data-i="utility_rule"><strong>Divisible:</strong> fractions grant proportional discount for one night</p>
+          <p data-i="transfer_rule"><strong>Transferable:</strong> tradable on secondary markets</p>
+          <p><strong>Use Cases:</strong> book nights, transfer, or hold</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ownership NFT (MSOT) -->
+    <section>
+      <h2 data-i="msot_title">MSOT — Ownership NFT</h2>
+      <div class="panel">
+        <p data-i="msot_text_1"><strong>1 MSOT NFT = 2% ownership of a specific villa/unit</strong> for <strong>10 years</strong>.</p>
+        <p data-i="msot_text_2">Total Supply: <strong>100 NFTs</strong> • Price: <strong>$1,500</strong> each • VIP booking rights for the specific unit • Resalable on NFT marketplaces • Metadata includes property docs and perks.</p>
+      </div>
+    </section>
+
+    <!-- Wallet / Buy -->
+    <section>
+      <h2 data-i="buy_title">Buy a Reservation (Presale)</h2>
+      <div class="panel">
+        <p data-i="buy_text">Send USDT on Polygon to the address below. MST tokens are delivered automatically by the smart contract.</p>
+        <div class="wallet-box">
+          <span class="code" id="addr">0x000…</span>
+          <button class="btn" id="copyBtn" data-i="copy_btn">Copy Address</button>
+          <a class="btn secondary" id="deepLink" href="#" data-i="open_wallet">Open in Wallet</a>
+        </div>
+        <p class="notice" style="margin-top:.6rem" data-i="wallet_note">Compatible: MetaMask • Trust Wallet • Coinbase Wallet (Polygon USDT).</p>
+      </div>
+    </section>
+
+    <!-- Lead Form -->
+    <section>
+      <h2 data-i="form_title">Stay in Touch</h2>
+      <div class="panel">
+        <form id="leadForm">
+          <div class="row">
+            <div>
+              <label for="email" data-i="form_email_lbl">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" required/>
+            </div>
+            <div>
+              <label for="wallet" data-i="form_wallet_lbl">Wallet (Polygon)</label>
+              <input id="wallet" name="wallet" type="text" placeholder="0x..." required/>
+            </div>
+          </div>
+          <div>
+            <label for="message" data-i="form_msg_lbl">Message / Feedback</label>
+            <textarea id="message" name="message" placeholder="Your thoughts…"></textarea>
+          </div>
+          <button class="btn" type="submit" data-i="form_send_btn">Send</button>
+          <div class="msg" id="formMsg"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Team & Social -->
+    <section class="grid cols-2">
+      <div class="panel">
+        <h2 data-i="team_title">Our Team</h2>
+        <p><strong>Mohammad</strong> — Founder & Project Lead</p>
+        <p><strong>Daniel</strong> — Vision & Design</p>
+        <p data-i="team_more">Supported by architects, hospitality pros, and blockchain developers.</p>
+      </div>
+      <div class="panel">
+        <h2 data-i="social_title">Connect with Us</h2>
+        <p><a href="#" target="_blank">Instagram</a> · <a href="#" target="_blank">Twitter/X</a> · <a href="#" target="_blank">Telegram</a></p>
+        <p class="notice" data-i="contact_note">Business inquiries: contact@millionstar.example</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2025 Million Star Resort — Iran. All rights reserved.</footer>
+
+  <script>
+    // ======= CONFIG (TODO: set your values) =======
+    const WALLET_ADDRESS = "0x1234567890ABCDEF1234567890ABCDEF12345678"; // TODO
+    const PRESALE_DEADLINE = "2025-09-30T18:00:00Z"; // TODO
+    const SCRIPT_URL = "https://script.google.com/macros/s/XXXXXXXXXXXXXXXXXXXXXXXX/exec"; // TODO (Google Apps Script Web App URL)
+
+    // ======= i18n strings =======
+    const T = {
+      en:{hero_title:"Where luxury meets the desert sky",hero_sub:"Glass-roof villas • Private pools • Stargazing under a million stars",presale:"Presale ends in:",
+        about_title:"About the Project",about_text:"Million Star Resort is an eco-luxury desert retreat in Iran. Each private villa features a glass-ceiling bedroom for stargazing and a secluded pool—crafted for digital detox, serenity, and unforgettable stories.",
+        purpose_title:"Our Purpose",purpose_quote:"\"Everyone deserves to make his/her story.\"",purpose_text:"We design moments that become memories—merging nature, privacy, and luxury so every guest can write a personal chapter under the night sky.",
+        vision_title:"Our Vision",vision_text:"To redefine hospitality by fusing stargazing architecture, sustainable design, and tokenized reservations—transparent, transferable, and global.",
+        how_title:"How It Works",how_text_1:"Purchase during the presale and our smart contract automatically sends tokens to your wallet. Each token represents one night you can stay at Million Star Resort.",
+        how_text_2:"Tokens are transferable on Polygon. You can hold, use to book nights, or resell them on secondary markets. Fractional ownership grants proportional discount for a single night.",
+        pricing_title:"Token Pricing & Special Offers",real_value_label:"Real Value (per MST)",presale_price_label:"Presale Price (Priority 1)",off_note:"best early price",presale_alloc_label:"Presale Allocation Cap",
+        vip_label:"VIP Tokens",vip_tba:"pricing & date TBA",priority_note:"Reservation priority: VIP holders → Priority 1 (presale) → general bookings.",
+        investor_title:"Investor Information",token_name_label:"MST (ERC-20):",chain_label:"Blockchain:",supply_label:"MST Supply:",lifespan_label:"Token Lifespan:",
+        utility_rule:"Divisible: fractions grant proportional discount for one night",transfer_rule:"Transferable: tradable on secondary markets",
+        msot_title:"MSOT — Ownership NFT",msot_text_1:"1 MSOT NFT = 2% ownership of a specific villa/unit for 10 years.",
+        msot_text_2:"Total Supply: 100 NFTs • Price: $1,500 each • VIP booking rights for the specific unit • Resalable • Metadata includes property docs and perks.",
+        buy_title:"Buy a Reservation (Presale)",buy_text:"Send USDT on Polygon to the address below. MST tokens are delivered automatically by the smart contract.",
+        copy_btn:"Copy Address",open_wallet:"Open in Wallet",wallet_note:"Compatible: MetaMask • Trust Wallet • Coinbase Wallet (Polygon USDT).",
+        form_title:"Stay in Touch",form_email_lbl:"Email",form_wallet_lbl:"Wallet (Polygon)",form_msg_lbl:"Message / Feedback",form_send_btn:"Send",
+        team_title:"Our Team",team_more:"Supported by architects, hospitality pros, and blockchain developers.",social_title:"Connect with Us",contact_note:"Business inquiries: contact@millionstar.example"
+      },
+      fa:{hero_title:"جایی که لوکس بودن با آسمان کویر تلاقی می‌کند",hero_sub:"ویلاهای سقف شیشه‌ای • استخرهای خصوصی • تماشای ستاره‌ها",presale:"پایان پیش‌فروش:",
+        about_title:"درباره پروژه",about_text:"میلیون استار ریزورت یک اقامتگاه لوکس و پایدار در کویر ایران است. هر ویلا با سقف شیشه‌ای برای رصد ستاره‌ها و استخری خصوصی طراحی شده تا تجربه‌ای آرام و بدون هیاهوی دیجیتال بسازد.",
+        purpose_title:"هدف ما",purpose_quote:"«هرکسی سزاوار ساختن داستان خود است.»",purpose_text:"ما لحظاتی می‌سازیم که به خاطره تبدیل می‌شوند—ترکیبی از طبیعت، حریم خصوصی و لوکس بودن تا هر مهمان داستان خودش را زیر آسمان شب بنویسد.",
+        vision_title:"چشم‌انداز ما",vision_text:"بازتعریف میهمان‌نوازی با معماریِ ستاره‌نگر، طراحی پایدار و رزرو مبتنی بر توکن—شفاف، قابل‌انتقال و جهانی.",
+        how_title:"نحوه کار",how_text_1:"با خرید در پیش‌فروش، قرارداد هوشمند توکن‌ها را به‌صورت خودکار به کیف پول شما می‌فرستد. هر توکن برابر یک شب اقامت است.",
+        how_text_2:"توکن‌ها روی پلیگون قابل‌انتقال‌اند؛ می‌توانید نگه دارید، برای رزرو استفاده کنید یا معامله کنید. مالکیت جزئی تخفیف متناسب ایجاد می‌کند.",
+        pricing_title:"قیمت‌گذاری و پیشنهادها",real_value_label:"ارزش واقعی (هر MST)",presale_price_label:"قیمت پیش‌فروش (اولویت ۱)",off_note:"بهترین قیمت اولیه",presale_alloc_label:"سقف تخصیص پیش‌فروش",
+        vip_label:"توکن‌های VIP",vip_tba:"قیمت و تاریخ به‌زودی",priority_note:"اولویت رزرو: VIP ← اولویت ۱ (پیش‌فروش) ← رزرو عمومی.",
+        investor_title:"اطلاعات سرمایه‌گذار",token_name_label:"MST (استاندارد ERC-20):",chain_label:"بلاک‌چین:",supply_label:"عرضه MST:",lifespan_label:"طول عمر توکن:",
+        utility_rule:"تقسیم‌پذیر: کسری توکن تخفیف متناسب می‌دهد",transfer_rule:"قابل انتقال: قابل معامله در بازارهای ثانویه",
+        msot_title:"MSOT — NFT مالکیتی",msot_text_1:"هر MSOT = مالکیت ۲٪ از یک ویلا/واحد مشخص به مدت ۱۰ سال.",
+        msot_text_2:"عرضه کل: ۱۰۰ NFT • قیمت: ۱۵۰۰ دلار هرکدام • حق اولویت VIP برای همان واحد • قابل فروش مجدد • متادیتا شامل اسناد و مزایا.",
+        buy_title:"خرید رزرو (پیش‌فروش)",buy_text:"USDT شبکه Polygon را به آدرس زیر بفرستید. توکن‌های MST به‌طور خودکار تحویل می‌شوند.",
+        copy_btn:"کپی آدرس",open_wallet:"باز کردن در کیف‌پول",wallet_note:"سازگار با MetaMask • Trust Wallet • Coinbase Wallet (USDT روی Polygon).",
+        form_title:"با ما در تماس بمانید",form_email_lbl:"ایمیل",form_wallet_lbl:"کیف‌پول (Polygon)",form_msg_lbl:"پیام / نظر",form_send_btn:"ارسال",
+        team_title:"تیم ما",team_more:"با همراهی معماران، متخصصان هتلداری و توسعه‌دهندگان بلاک‌چین.",social_title:"ارتباط با ما",contact_note:"مکاتبات تجاری: contact@millionstar.example"
+      },
+      ar:{hero_title:"حيث يلتقي الفخامة بسماء الصحراء",hero_sub:"فلل بسقف زجاجي • مسابح خاصة • مراقبة النجوم",presale:"ينتهي البيع المسبق خلال:",
+        about_title:"عن المشروع",about_text:"منتجع Million Star ملاذ فاخر صديق للبيئة في صحراء إيران. كل فيلا تضم غرفة بسقف زجاجي لالتقاط النجوم ومسبحاً خاصاً لراحة تامة.",
+        purpose_title:"غايتنا",purpose_quote:"\"كل شخص يستحق أن يصنع قصته.\"",purpose_text:"نخلق لحظات تصبح ذكريات—نمزج الطبيعة والخصوصية والفخامة ليكتب كل ضيف فصله تحت السماء.",
+        vision_title:"رؤيتنا",vision_text:"إعادة تعريف الضيافة بدمج عمارة مراقبة النجوم، التصميم المستدام، وحجوزات التوكن—بشفافية وقابلية للنقل.",
+        how_title:"كيف يعمل",how_text_1:"عند الشراء في البيع المسبق، يرسل العقد الذكي التوكنات تلقائياً إلى محفظتك. كل توكن يمثل ليلة إقامة واحدة.",
+        how_text_2:"التوكنات قابلة للتحويل على Polygon؛ يمكنك الاحتفاظ بها أو استخدامها للحجز أو بيعها. الملكية الجزئية تمنح خصماً متناسباً.",
+        pricing_title:"التسعير والعروض الخاصة",real_value_label:"القيمة الحقيقية (لـ MST)",presale_price_label:"سعر البيع المسبق (الأولوية 1)",off_note:"أفضل سعر مبكر",presale_alloc_label:"حد تخصيص البيع المسبق",
+        vip_label:"توكنات VIP",vip_tba:"السعر والتاريخ قريباً",priority_note:"أولوية الحجز: VIP → أولوية 1 (بيع مسبق) → الحجوزات العامة.",
+        investor_title:"معلومات المستثمر",token_name_label:"MST (ERC-20):",chain_label:"السلسلة:",supply_label:"معروض MST:",lifespan_label:"عمر التوكن:",
+        utility_rule:"قابل للتجزئة: الأجزاء تمنح خصماً نسبياً لليلة واحدة",transfer_rule:"قابل للتحويل: قابل للتداول في الأسواق",
+        msot_title:"MSOT — NFT الملكية",msot_text_1:"كل MSOT = ملكية 2٪ من فيلا/وحدة محددة لمدة 10 سنوات.",
+        msot_text_2:"إجمالي المعروض: 100 NFT • السعر: 1500$ لكل واحد • حقوق حجز VIP للوحدة • قابل لإعادة البيع • بيانات تعريف تشمل الوثائق والميزات.",
+        buy_title:"شراء حجز (بيع مسبق)",buy_text:"أرسل USDT على Polygon إلى العنوان أدناه. يتم تسليم MST تلقائياً بواسطة العقد الذكي.",
+        copy_btn:"نسخ العنوان",open_wallet:"فتح في المحفظة",wallet_note:"متوافق مع MetaMask • Trust Wallet • Coinbase Wallet (Polygon USDT).",
+        form_title:"ابقَ على تواصل",form_email_lbl:"البريد الإلكتروني",form_wallet_lbl:"المحفظة (Polygon)",form_msg_lbl:"رسالة / رأي",form_send_btn:"إرسال",
+        team_title:"فريقنا",team_more:"بدعم من معماريين وخبراء ضيافة ومطوري بلوك تشين.",social_title:"تواصل معنا",contact_note:"للأعمال: contact@millionstar.example"
+      },
+      tr:{hero_title:"Lüksün çöl gökyüzüyle buluştuğu yer",hero_sub:"Cam tavanlı villalar • Özel havuzlar • Yıldızların altında konaklama",presale:"Ön satış bitimine kalan:",
+        about_title:"Proje Hakkında",about_text:"Million Star Resort, İran çölünde eko-lüks bir kaçış noktasıdır. Her villa, yıldız gözlemi için cam tavanlı yatak odası ve mahrem bir havuza sahiptir.",
+        purpose_title:"Amacımız",purpose_quote:"\"Herkes kendi hikâyesini yazmayı hak eder.\"",purpose_text:"Doğa, mahremiyet ve lüksü birleştirerek her misafirin gece gökyüzü altında kendi bölümünü yazmasını sağlıyoruz.",
+        vision_title:"Vizyonumuz",vision_text:"Yıldız izleme mimarisi, sürdürülebilir tasarım ve tokenlı rezervasyonlarla misafirperverliği yeniden tanımlamak.",
+        how_title:"Nasıl Çalışır",how_text_1:"Ön satışta satın aldığınızda akıllı sözleşmemiz tokenları cüzdanınıza otomatik gönderir. Her token bir gece konaklamayı temsil eder.",
+        how_text_2:"Tokenlar Polygon üzerinde transfer edilebilir; tutabilir, rezervasyonda kullanabilir veya satabilirsiniz. Kısmi sahiplik orantılı indirim sağlar.",
+        pricing_title:"Fiyatlandırma ve Özel Teklifler",real_value_label:"Gerçek Değer (MST için)",presale_price_label:"Ön Satış Fiyatı (Öncelik 1)",off_note:"en iyi erken fiyat",presale_alloc_label:"Ön Satış Tahsis Sınırı",
+        vip_label:"VIP Tokenlar",vip_tba:"fiyat ve tarih yakında",priority_note:"Rezervasyon önceliği: VIP → Öncelik 1 (ön satış) → genel rezervasyon.",
+        investor_title:"Yatırımcı Bilgileri",token_name_label:"MST (ERC-20):",chain_label:"Blokzincir:",supply_label:"MST Arzı:",lifespan_label:"Token Ömrü:",
+        utility_rule:"Bölünebilir: kesirler tek gece için orantılı indirim sağlar",transfer_rule:"Transfer edilebilir: ikincil piyasalarda alınıp satılabilir",
+        msot_title:"MSOT — Mülkiyet NFT’si",msot_text_1:"Her MSOT = belirli bir villa/ünitenin %2 mülkiyeti (10 yıl).",
+        msot_text_2:"Toplam Arz: 100 NFT • Fiyat: 1.500$ • İlgili ünite için VIP öncelik • Yeniden satılabilir • Metadata: belgeler ve ayrıcalıklar.",
+        buy_title:"Rezervasyon Satın Al (Ön Satış)",buy_text:"Aşağıdaki adrese Polygon üzerinde USDT gönderin. MST tokenları sözleşme tarafından otomatik olarak teslim edilir.",
+        copy_btn:"Adresi Kopyala",open_wallet:"Cüzdarda Aç",wallet_note:"Uyumlu: MetaMask • Trust Wallet • Coinbase Wallet (Polygon USDT).",
+        form_title:"İletişimde Kal",form_email_lbl:"E-posta",form_wallet_lbl:"Cüzdan (Polygon)",form_msg_lbl:"Mesaj / Geri bildirim",form_send_btn:"Gönder",
+        team_title:"Ekibimiz",team_more:"Mimarlar, otelcilik uzmanları ve blokzincir geliştiricileri tarafından desteklenmektedir.",social_title:"Bize Ulaşın",contact_note:"İş iletişimi: contact@millionstar.example"
+      }
+    };
+
+    // Language handling
+    const langSel = document.getElementById("lang");
+    const iEls = () => document.querySelectorAll("[data-i]");
+    function applyLang(l){
+      const d = T[l] || T.en;
+      document.documentElement.lang = l;
+      document.documentElement.dir = (l==="fa" || l==="ar") ? "rtl" : "ltr";
+      iEls().forEach(el => { const k = el.getAttribute("data-i"); if(d[k]) el.innerHTML = d[k]; });
+    }
+    langSel.addEventListener("change", e=>applyLang(e.target.value));
+    applyLang("en");
+
+    // Wallet UI
+    const addrEl = document.getElementById("addr");
+    addrEl.textContent = WALLET_ADDRESS;
+    document.getElementById("deepLink").href = `ethereum:${WALLET_ADDRESS}`;
+    document.getElementById("copyBtn").addEventListener("click", async ()=>{
+      try{
+        await navigator.clipboard.writeText(WALLET_ADDRESS);
+        const l = langSel.value; const ok = l==="fa"?"کپی شد":l==="ar"?"تم النسخ":l==="tr"?"Kopyalandı":"Copied!";
+        const btn = document.getElementById("copyBtn");
+        const old = btn.textContent; btn.textContent = ok; setTimeout(()=>btn.textContent = T[l].copy_btn, 1200);
+      }catch{ alert("Copy failed"); }
+    });
+
+    // Countdown
+    const clock = document.getElementById("clock");
+    const end = new Date(PRESALE_DEADLINE).getTime();
+    function tick(){
+      const diff = Math.max(0, end - Date.now());
+      const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+      clock.textContent = `${String(d).padStart(2,"0")}d:${String(h).padStart(2,"0")}h:${String(m).padStart(2,"0")}m:${String(s).padStart(2,"0")}s`;
+    }
+    setInterval(tick, 1000); tick();
+
+    // Lead form → Google Apps Script
+    const form = document.getElementById("leadForm");
+    const formMsg = document.getElementById("formMsg");
+    form.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      formMsg.textContent = "";
+      const data = {
+        email: document.getElementById("email").value.trim(),
+        wallet: document.getElementById("wallet").value.trim(),
+        message: document.getElementById("message").value.trim(),
+        ts: new Date().toISOString()
+      };
+      if(!data.email || !data.wallet){ formMsg.style.color="#f66"; formMsg.textContent = "Please fill email & wallet."; return; }
+      try{
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+        form.reset();
+        formMsg.style.color="#7cf07c";
+        formMsg.textContent = (langSel.value==="fa")?"ثبت شد!":
+          (langSel.value==="ar")?"تم الإرسال!":
+          (langSel.value==="tr")?"Kaydedildi!":"Saved!";
+      }catch(err){
+        formMsg.style.color="#f66";
+        formMsg.textContent = "Submit failed. Try again.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
